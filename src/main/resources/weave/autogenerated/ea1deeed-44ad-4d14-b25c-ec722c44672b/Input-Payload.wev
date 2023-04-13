@@ -1,0 +1,14 @@
+%dw 2.0
+
+type auto_ea1deeed_44ad_4d14_b25c_ec722c44672b_Input_Payload = {
+  eye_color: String, 
+  gender: String, 
+  skin_color: String, 
+  mass: Number, 
+  name: String, 
+  height: Number, 
+  hair_color: String, 
+  birth_year: String, 
+  _?: Any
+}
+

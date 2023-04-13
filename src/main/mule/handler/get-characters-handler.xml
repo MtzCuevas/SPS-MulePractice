@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core" xmlns="http://www.mulesoft.org/schema/mule/core"
+	xmlns:doc="http://www.mulesoft.org/schema/mule/documentation"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd">
+	<sub-flow name="get-characters-handlerSub_Flow" doc:id="fb5dc2d9-ee81-4025-ae49-b94ddd209867" >
+		<logger level="INFO" doc:name="Logger" doc:id="fa2aecdd-d84d-4a87-ade2-73856f0d8f47" message="get:\people:sw-movies-website-characters-xapi-services-config" />
+		<ee:transform doc:name="Store and Define Variable" doc:id="a286c1ea-473e-4c7f-8806-9c2bd90ef0ae" >
+			<ee:message >
+			</ee:message>
+			<ee:variables >
+				<ee:set-variable variableName="query" ><![CDATA[attributes.queryParams.gender]]></ee:set-variable>
+				<ee:set-variable variableName="accumulator" ><![CDATA[[]]]></ee:set-variable>
+			</ee:variables>
+		</ee:transform>
+		<flow-ref doc:name="Go Orchestrator" doc:id="38b42665-64fd-47c4-a3f1-2dc59ea7fe6f" name="get-characters-orchestratorSub_Flow"/>
+	</sub-flow>
+</mule>

@@ -1,0 +1,116 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:http="http://www.mulesoft.org/schema/mule/http" xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core"
+	xmlns="http://www.mulesoft.org/schema/mule/core"
+	xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd
+http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd">
+	<sub-flow name="get-characters-orchestratorSub_Flow" doc:id="ea1deeed-44ad-4d14-b25c-ec722c44672b" >
+		<flow-ref doc:name="Call Client" doc:id="bf4cbdc0-6e08-42ff-80ca-dadab29a1b4d" name="api-clientSub_Flow" />
+		<set-variable value="#[ceil(payload.count/10)-1]" doc:name="Checking Number Pages" doc:id="27a0ac11-adfd-4f5e-a443-b45c97c59b5c" variableName="pages" />
+		<set-variable value="#[2 to vars.pages as Number]" doc:name="Checking the maximum number pages" doc:id="8d471a2a-0dac-4a2b-80d4-8ef6022b4b80" variableName="maxpages"/>
+		<ee:transform doc:name="Filter and transform data" doc:id="ba603a34-578d-417f-9d0c-74cbd0d8b953">
+			<ee:message >
+				<ee:set-payload ><![CDATA[%dw 2.0
+output application/json
+---
+if (vars.query == null) 
+	payload.results map(n, idx) -> 
+		{
+    	"name": n.name,
+	    "height": n.height,
+	    "mass": n.mass,
+	    "hair_color": n.hair_color,
+	    "skin_color": n.skin_color,
+	    "eye_color": n.eye_color,
+	    "birth_year": n.birth_year,
+	    "gender": n.gender
+	     }
+	else 
+	    ((payload.results map(n, idx) -> 
+	    	{
+		    "name": n.name,
+		    "height": n.height,
+		    "mass": n.mass,
+		    "hair_color": n.hair_color,
+		    "skin_color": n.skin_color,
+		    "eye_color": n.eye_color,
+		    "birth_year": n.birth_year,
+		    "gender": n.gender
+			}) filter ((value, index) -> value.gender == vars.query))]]></ee:set-payload>
+			</ee:message>
+			<ee:variables>
+			</ee:variables>
+		</ee:transform>
+		<ee:transform doc:name="Accumulator Payload" doc:id="d0ac9fc8-640c-4611-9645-0f0de5cfebba" >
+			<ee:message >
+			</ee:message>
+			<ee:variables >
+				<ee:set-variable variableName="accumulator" ><![CDATA[%dw 2.0
+output application/json
+---
+vars.accumulator ++ payload]]></ee:set-variable>
+			</ee:variables>
+		</ee:transform>
+		<flow-ref doc:name="Choice" doc:id="fb3f9e42-d39c-43b9-9831-b4febaaf7e33" name="choice"/>
+		<ee:transform doc:name="Filter" doc:id="535e76ba-9ff0-43ad-b1b1-c8b14b2b5925" >
+			<ee:message >
+				<ee:set-payload ><![CDATA[%dw 2.0
+output application/csv
+---
+vars.accumulator]]></ee:set-payload>
+			</ee:message>
+			<ee:variables />
+		</ee:transform>
+	</sub-flow>
+	<sub-flow name="choice" doc:id="b0a21fe0-aa00-4972-a6c0-ec54bb8afac4" >
+		<choice doc:name="Choice" doc:id="cdf5182d-f00f-4433-92c4-c2c81223bf47" >
+			<when expression="#[vars.pages &gt; 1]" >
+				<foreach doc:name="For Each" doc:id="0100e28e-a5cb-4317-807e-ca67ada69694" collection="#[vars.maxpages]" >
+					<flow-ref doc:name="Call Client" doc:id="7845e8bf-4e81-4b76-a8f5-2ba629fb6e27" name="api-clientSub_Flow" />
+					<ee:transform doc:name="Filter and transform data" doc:id="5bfb0f8f-1baa-4aff-879f-416d109f2a08" >
+						<ee:message >
+							<ee:set-payload ><![CDATA[%dw 2.0
+output application/json
+---
+if (vars.query == null) 
+	payload.results map(n, idx) -> 
+		{
+    	"name": n.name,
+	    "height": n.height,
+	    "mass": n.mass,
+	    "hair_color": n.hair_color,
+	    "skin_color": n.skin_color,
+	    "eye_color": n.eye_color,
+	    "birth_year": n.birth_year,
+	    "gender": n.gender
+	     }
+	else 
+	    ((payload.results map(n, idx) -> 
+	    	{
+		    "name": n.name,
+		    "height": n.height,
+		    "mass": n.mass,
+		    "hair_color": n.hair_color,
+		    "skin_color": n.skin_color,
+		    "eye_color": n.eye_color,
+		    "birth_year": n.birth_year,
+		    "gender": n.gender
+			}) filter ((value, index) -> value.gender == vars.query))]]></ee:set-payload>
+						</ee:message>
+						<ee:variables />
+					</ee:transform>
+					<ee:transform doc:name="Accumulator Payload" doc:id="9c069438-57a3-4d16-a80f-2249b108ad7e" >
+						<ee:message />
+						<ee:variables >
+							<ee:set-variable variableName="accumulator" ><![CDATA[%dw 2.0
+output application/json
+---
+vars.accumulator ++ payload]]></ee:set-variable>
+						</ee:variables>
+					</ee:transform>
+				</foreach>
+			</when>
+		</choice>
+	</sub-flow>
+</mule>

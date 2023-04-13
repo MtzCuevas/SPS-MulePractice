@@ -1,0 +1,54 @@
+#%RAML 1.0
+title: sw-movies-website-characters-xapi-services
+baseUri: https://swapi.dev/api/
+version: 1.0
+protocols:
+  - HTTP
+mediaType: 
+- application/json
+description: This API will only retrieves all Star Wars movies characters
+
+/people:
+  get:
+    queryParameters:
+      gender:
+        displayName: gender
+        type: string
+        description: Filter by Character gender
+        example: male
+        required: false
+
+    responses:
+      200:
+        description: Retrieves all Star Wars characters
+        body:
+          application/json:
+            properties:
+              name:
+                type: string
+                example: Luke Skywalker
+              height:
+                type: number
+                example: 172
+              mass:
+                type: number
+                example: 77
+              hair_color:
+                type: string
+                example: blond
+              skin_color:
+                type: string
+                example: fair
+              eye_color:
+                type: string
+                example: blue
+              birth_year:
+                type: string
+                example: 19BBY
+              gender:
+                type: string
+                example: male
+      401:
+        description: Bad request
+      404:
+        description: Not found

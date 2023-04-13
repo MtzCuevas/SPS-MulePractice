@@ -1,0 +1,11 @@
+http:
+  port:
+    "8081"
+
+apiclient:
+  host:
+    swapi.dev
+  port:
+    "80"
+  path:
+    /api/people
